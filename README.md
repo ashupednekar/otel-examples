@@ -39,7 +39,7 @@ All microservices are instrumented with OTEL to send telemetry data (spans, trac
 
 The following diagram represents the flow of events and interactions between the services:
 
-![Architecture](https://github.com/user-attachments/assets/f37e31bb-2333-47ae-83b9-a8d0131905a0)
+![Architecture](https://github.com/user-attachments/assets/58453127-d62a-4596-a0d4-6308a7a9bc9f)
 
 ## Running the Examples
 
