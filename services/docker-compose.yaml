@@ -8,3 +8,11 @@ services:
       - SMTP_PASS=${SMTP_PASS}
       - NATS_URL=localhost:30042
     network_mode: host
+
+  payment:
+    image: "ashupednekar535/otelexamples:payment"
+    container_name: payment 
+    environment:
+      - PAYMENT_PORT=7001
+      - NATS_URL=localhost:30042
+    network_mode: host
