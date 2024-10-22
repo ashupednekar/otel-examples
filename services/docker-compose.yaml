@@ -17,3 +17,19 @@ services:
       - NATS_URL=localhost:30042
     network_mode: host
 
+  invoice:
+    image: "ashupednekar535/otelexamples:invoice"
+    container_name: invoice
+    network_mode: host
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: 
+     - server
+     - /data
+    environment:
+     - MINIO_ROOT_USER=minio
+     - MINIO_ROOT_PASSWORD=miniopass
+    network_mode: host
+

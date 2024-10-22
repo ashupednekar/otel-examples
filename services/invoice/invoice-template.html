@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .invoice-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px 40px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #004085;
+            margin: 0;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .invoice-details {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #d3d3d3;
+            padding-bottom: 20px;
+        }
+
+        .invoice-details h2 {
+            font-size: 20px;
+            color: #007bff;
+            margin: 0 0 10px;
+            border-bottom: 1px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .invoice-details p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .order-summary {
+            margin: 20px 0;
+        }
+
+        .order-summary h2 {
+            font-size: 20px;
+            color: #007bff;
+            margin: 0 0 10px;
+            border-bottom: 1px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .order-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .order-summary th, .order-summary td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-summary th {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .order-summary td {
+            color: #666;
+        }
+
+        .order-summary tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .total p {
+            color: #004085;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #d3d3d3;
+            padding-top: 20px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        @media print {
+            .invoice-container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <header>
+            <h1>Invoice</h1>
+            <p>Order ID: {{order_id}}</p>
+        </header>
+
+        <div class="invoice-details">
+            <h2>Invoice Details</h2>
+            <p><strong>Order Date:</strong> {{order_date}}</p>
+            <p><strong>Customer Name:</strong> {{customer_name}}</p>
+            <p><strong>Payment Method:</strong> {{payment_method}}</p>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td>{{this.item_name}}</td>
+                        <td>{{this.item_qty}}</td>
+                        <td>{{this.item_price}}</td>
+                        <td>{{this.item_total}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total">
+            <p>Total Amount Due: {{total_amount}}</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for your purchase!</p>
+            <p>If you have any questions, contact us at support@example.com</p>
+            <p>&copy; {{current_year}} Your Company Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
