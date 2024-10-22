@@ -1,0 +1,10 @@
+services:
+
+  notification:
+    image: "ashupednekar535/otelexamples:notification"
+    container_name: notification
+    environment:
+      - SMTP_EMAIL=${SMTP_EMAIL}
+      - SMTP_PASS=${SMTP_PASS}
+      - NATS_URL=localhost:30042
+    network_mode: host
