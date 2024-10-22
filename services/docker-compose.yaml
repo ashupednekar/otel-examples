@@ -16,3 +16,4 @@ services:
       - PAYMENT_PORT=7001
       - NATS_URL=localhost:30042
     network_mode: host
+
