@@ -30,6 +30,7 @@ async def message_handler(msg):
     await msg.ack()
 
 
+
 async def start_consumer(stream_name: str, subject: str):
     await nats_client.connect("nats://localhost:30042")
     js = nats_client.jetstream()
@@ -42,22 +43,38 @@ async def start_consumer(stream_name: str, subject: str):
         else:
             return
 
-    durable_name = f"consumer_{subject.replace('.', '_')}"
+    durable_name = "paid-event-consumer"
+
     try:
-        await js.get_consumers(stream_name, durable_name)
+        # Try to get existing consumer info
+        await js.consumer_info(stream_name, durable_name)
     except Exception as e:
         if "not found" in str(e).lower():
+            # Create consumer if it doesn't exist
             consumer_config = ConsumerConfig(
-                durable_name=durable_name, ack_policy="explicit", filter_subject=subject
+                durable_name=durable_name, 
+                ack_policy="explicit", 
+                filter_subject=subject
             )
             await js.add_consumer(stream_name, consumer_config)
 
-    await js.subscribe(subject, cb=message_handler)
-    print(
-        f"Listening for messages on subject '{subject}' with consumer '{durable_name}'..."
-    )
+    # Create pull subscription using the consumer
+    subscription = await js.pull_subscribe(subject, durable_name)
+    print(f"Listening for messages on subject '{subject}' with consumer '{durable_name}'...")
+
     while True:
-        await asyncio.sleep(1)
+        try:
+            messages = await subscription.fetch(batch=1, timeout=1)
+            for message in messages:
+                await message_handler(message)
+                await message.ack()
+        except Exception as e:
+            if "timeout" not in str(e).lower():  # Ignore timeout exceptions
+                print(f"Error processing messages: {e}")
+        await asyncio.sleep(0.1)
+
+
+
 
 
 @app.command()

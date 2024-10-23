@@ -23,20 +23,20 @@ services:
     network_mode: host
   
   order:
-    image: "ashupednekar535/otelexamples:orders"
+    image: "ashupednekar535/otelexamples:order"
     container_name: order
     env_file: 
-    - orders/config.env
+    - order/config.env
     network_mode: host
 
   order-consumer:
-    image: "ashupednekar535/otelexamples:orders"
+    image: "ashupednekar535/otelexamples:order"
     container_name: order-consumer
     command: 
     - python
     - consumer.py
     env_file: 
-    - orders/config.env
+    - order/config.env
     network_mode: host
 
   minio:
