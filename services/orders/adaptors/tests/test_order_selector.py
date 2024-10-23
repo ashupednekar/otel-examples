@@ -1,11 +1,12 @@
+import uuid
 from unittest import IsolatedAsyncioTestCase
 
 from sqlalchemy.ext.asyncio.session import async_sessionmaker
+
 from adaptors.models.orders import OrdersSchema
 from adaptors.mutators.orders import OrderMutator
 from adaptors.selectors.orders import OrderSelector
 from utils.db import get_pool
-import uuid
 
 
 class TestOrderSelector(IsolatedAsyncioTestCase):

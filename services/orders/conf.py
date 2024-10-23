@@ -2,12 +2,8 @@ import logging
 from typing import Any, Tuple, Type
 
 from pydantic import ConfigDict
-from pydantic_settings import (
-    BaseSettings,
-    EnvSettingsSource,
-    PydanticBaseSettingsSource,
-)
-
+from pydantic_settings import (BaseSettings, EnvSettingsSource,
+                               PydanticBaseSettingsSource)
 
 logger = logging.getLogger(__name__)
 

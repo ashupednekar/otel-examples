@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker
 
 from conf import settings
-from sqlalchemy.ext.asyncio import create_async_engine
 
 
 def get_pool():

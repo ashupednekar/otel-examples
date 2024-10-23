@@ -1,7 +1,8 @@
-from typing import List
 import uuid
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from typing import List
+
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase): ...
