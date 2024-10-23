@@ -21,6 +21,23 @@ services:
     image: "ashupednekar535/otelexamples:invoice"
     container_name: invoice
     network_mode: host
+  
+  order:
+    image: "ashupednekar535/otelexamples:orders"
+    container_name: order
+    env_file: 
+    - orders/config.env
+    network_mode: host
+
+  order-consumer:
+    image: "ashupednekar535/otelexamples:orders"
+    container_name: order-consumer
+    command: 
+    - python
+    - consumer.py
+    env_file: 
+    - orders/config.env
+    network_mode: host
 
   minio:
     image: minio/minio

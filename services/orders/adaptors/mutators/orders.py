@@ -35,7 +35,7 @@ class OrderMutator:
                 )
                 order = result.scalars().one()
                 order.payment_status = "paid"
-                nats_client.publish(
+                await nats_client.publish(
                     "events.complete", json.dumps({"order_id": order.order_id}).encode()
                 )
                 await session.commit()
