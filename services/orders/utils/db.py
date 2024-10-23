@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
 
+from sqlalchemy.ext.asyncio.session import async_sessionmaker
+
 from conf import settings
 from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -20,3 +22,8 @@ def get_pool():
 async def get_db_connection(engine):
     async with engine.connect() as conn:
         yield conn
+
+
+@asynccontextmanager
+async def get_db_session(engine):
+    yield async_sessionmaker(engine)

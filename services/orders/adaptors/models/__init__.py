@@ -1,3 +1,3 @@
-from .user import Base as user
+from .orders import Base as orders
 
-metadata = [user.metadata]
+metadata = [orders.metadata]

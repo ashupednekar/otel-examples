@@ -58,13 +58,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    engine = create_engine(
-        config.get_main_option("sqlalchemy.url")
-    )
+    engine = create_engine(config.get_main_option("sqlalchemy.url"))
     Session = sessionmaker(bind=engine)
 
     with Session() as session:
-        context.configure(connection=session.connection(), target_metadata=target_metadata)
+        context.configure(
+            connection=session.connection(), target_metadata=target_metadata
+        )
         with context.begin_transaction():
             context.run_migrations()
 
