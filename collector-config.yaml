@@ -31,13 +31,13 @@ receivers:
   jaeger:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:14250
+        endpoint: jeager:14250
       thrift_binary:
-        endpoint: 0.0.0.0:6832
+        endpoint: jeager:6832
       thrift_compact:
-        endpoint: 0.0.0.0:6831
+        endpoint: jeager:6831
       thrift_http:
-        endpoint: 0.0.0.0:14268
+        endpoint: jeager:14268
 
   zipkin:
     endpoint: 0.0.0.0:9411

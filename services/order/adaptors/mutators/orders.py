@@ -6,21 +6,26 @@ from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 
 from ..models.orders import Orders, OrdersSchema
 
+import logfire
+
 
 class OrderMutator:
     @staticmethod
     async def create(
         async_session: async_sessionmaker[AsyncSession], order: OrdersSchema
     ) -> OrdersSchema:
-        order_entry: Orders = Orders(
-            order_id=order.order_id,
-            email=order.email,
-            payment_status=order.payment_status,
-        )
+        with logfire.span("creating entry from deserialized input"):
+            order_entry: Orders = Orders(
+                order_id=order.order_id,
+                email=order.email,
+                payment_status=order.payment_status,
+            )
         async with async_session() as session:
             async with session.begin():
-                session.add_all([order_entry])
-                return order
+                # note: atomicity not needed here, just for illustration
+                with logfire.span("creating order entry"):
+                    session.add_all([order_entry])
+                    return order
 
     @staticmethod
     async def mark_as_paid(
@@ -30,12 +35,14 @@ class OrderMutator:
     ) -> None:
         async with async_session() as session:
             async with session.begin():
-                result = await session.execute(
-                    select(Orders).where(Orders.order_id == order_id)
-                )
-                order = result.scalars().one()
-                order.payment_status = "paid"
-                await nats_client.publish(
-                        "events.complete", json.dumps({"order_id": order.order_id, "email": order.email}).encode()
-                )
-                await session.commit()
+                with logfire.span("retrieving order entry"):
+                    result = await session.execute(
+                        select(Orders).where(Orders.order_id == order_id)
+                    )
+                    order = result.scalars().one()  # note: not handled error for illustration
+                with logfire.span("updating payment status and publishing event"):
+                    order.payment_status = "paid"
+                    await nats_client.publish(
+                            "events.complete", json.dumps({"order_id": order.order_id, "email": order.email}).encode()
+                    )
+                    await session.commit()

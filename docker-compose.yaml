@@ -1,17 +1,4 @@
 services:
-  collector:
-    image: otel/opentelemetry-collector-contrib
-    container_name: collector
-    volumes:
-    - ./collector-config.yaml:/etc/otelcol-contrib/config.yaml
-    network_mode: host
-
-  jeager:
-    image: jaegertracing/all-in-one:1.6.0
-    container_name: jeager
-    environment:
-    - COLLECTOR_ZIPKIN_HTTP_PORT=9411
-    network_mode: host
 
   minio:
     image: minio/minio
