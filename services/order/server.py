@@ -1,24 +1,17 @@
 import uvicorn
-from fastapi import FastAPI
-from sqlalchemy.ext.asyncio.session import async_sessionmaker
-
 from api.handlers.orders import router as order_router
-from utils.db import get_pool
+from fastapi import FastAPI
 
+import logging
+import logfire
 
-class AppState:
-    def __init__(self):
-        self.pool = async_sessionmaker(get_pool())
+logfire.configure(service_name="order", send_to_logfire=False)
 
-
-state = AppState()
-
-
-def get_app_state() -> AppState:
-    return state
-
+logging.basicConfig(handlers=[logfire.LogfireLoggingHandler()])
 
 app = FastAPI()
+logfire.instrument_fastapi(app)
+
 app.include_router(order_router)
 
 if __name__ == "__main__":

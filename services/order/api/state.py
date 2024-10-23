@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio.session import async_sessionmaker
-
 from utils.db import get_pool
 
 

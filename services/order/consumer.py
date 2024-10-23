@@ -1,14 +1,13 @@
 import asyncio
 import json
 
-from sqlalchemy.exc import NoResultFound
 import typer
+from adaptors.mutators.orders import OrderMutator
+from api.state import get_app_state
 from nats.aio.client import Client as NATS
 from nats.js.api import ConsumerConfig, StreamConfig
 from pydantic import BaseModel, TypeAdapter
-
-from adaptors.mutators.orders import OrderMutator
-from api.state import get_app_state
+from sqlalchemy.exc import NoResultFound
 
 app = typer.Typer()
 nats_client = NATS()

@@ -1,9 +1,8 @@
 from unittest import IsolatedAsyncioTestCase
 
-from sqlalchemy.ext.asyncio.session import async_sessionmaker
-
 from adaptors.models.orders import OrdersSchema
 from adaptors.mutators.orders import OrderMutator
+from sqlalchemy.ext.asyncio.session import async_sessionmaker
 from utils.db import get_pool
 
 

@@ -1,10 +1,9 @@
 from logging.config import fileConfig
 
+from adaptors import models
 from alembic import context
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from adaptors import models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

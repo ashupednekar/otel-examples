@@ -1,11 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-
 from adaptors.models.orders import OrdersSchema
 from adaptors.mutators.orders import OrderMutator
 from adaptors.selectors.orders import OrderSelector
 from api.state import AppState, get_app_state
+from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 

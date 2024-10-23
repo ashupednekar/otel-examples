@@ -1,9 +1,8 @@
 from contextlib import asynccontextmanager
 
+from conf import settings
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker
-
-from conf import settings
 
 
 def get_pool():
@@ -24,6 +23,4 @@ async def get_db_connection(engine):
         yield conn
 
 
-@asynccontextmanager
-async def get_db_session(engine):
-    yield async_sessionmaker(engine)
+
