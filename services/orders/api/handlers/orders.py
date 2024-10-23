@@ -14,8 +14,9 @@ router = APIRouter()
 async def create_order(
     order: OrdersSchema,
     state: AppState = Depends(get_app_state),
-):
+) -> OrdersSchema:
     await OrderMutator.create(state.pool, order)
+    return order
 
 
 @router.get("/orders/", response_model=List[OrdersSchema])

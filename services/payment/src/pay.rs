@@ -1,15 +1,21 @@
 use std::time::Duration;
 
 use axum::{extract::State, Json};
+use serde::Serialize;
 use serde_json::json;
 use tokio::time::sleep;
 
 use crate::{data::PaymentPayload, state::AppState};
 
+#[derive(Serialize)]
+struct Response{
+    message: &'static str 
+}
+
 pub async fn handle_payment(
     State(state): State<AppState>,
     Json(payload): Json<PaymentPayload>,
-) -> Result<&'static str, &'static str> {
+) -> Result<String, &'static str> {
     println!("Starting payment processing for order ID: {}", payload.order_id);
     
     // Simulate a delay to mimic payment processing
@@ -37,5 +43,6 @@ pub async fn handle_payment(
         })?;
     
     println!("Payment processed and event published for order ID: {}", payload.order_id);
-    Ok("Payment processed and event published")
+    let res = Response{message: "Payment processed and event published"};
+    serde_json::to_string(&res).map_err(|_| "serialization failed")
 }
