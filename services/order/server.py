@@ -1,9 +1,9 @@
+import logging
+
+import logfire
 import uvicorn
 from api.handlers.orders import router as order_router
 from fastapi import FastAPI
-
-import logging
-import logfire
 
 logfire.configure(service_name="order", send_to_logfire=False)
 

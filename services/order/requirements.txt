@@ -11,4 +11,4 @@ aiosqlite~=0.20.0
 uvicorn~=0.32.0
 greenlet~=3.1.1
 #telemetry
-logfire~=1.2.0
+logfire[fastapi,sqlalchemy]~=1.2.0
