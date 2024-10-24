@@ -2,7 +2,7 @@ use async_nats::Client;
 
 use crate::helpers::get_nats_connection;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AppState {
     pub nats_connection: Client,
 }

@@ -18,37 +18,9 @@ struct Response {
     message: &'static str,
 }
 
-pub async fn handle_payment(
-    State(state): State<AppState>,
-    Json(payload): Json<PaymentPayload>,
-) -> Result<String, &'static str> {
-    let tracer = global::tracer("payment");
 
-    let mut span = tracer
-        .span_builder("payment processing".to_string())
-        .with_kind(SpanKind::Internal)
-        .start(&tracer);
-
-    tracing::info!(
-        "Starting payment processing for order ID: {}",
-        payload.order_id
-    );
-
-    // Simulate a delay to mimic payment processing
-    sleep(Duration::from_millis(500)).await;
-    tracing::info!(
-        "Payment processing completed for order ID: {}",
-        payload.order_id
-    );
-
-    Span::set_status(&mut span, Status::Ok);
-    Span::end(&mut span);
-
-    let mut span = tracer
-        .span_builder("producing paid event".to_string())
-        .with_kind(SpanKind::Producer)
-        .start(&tracer);
-
+#[tracing::instrument]
+async fn produce(payload: &PaymentPayload, state: AppState) -> Result<(), &'static str>{
     let subject = "events.paid";
     let message = json!({ "order_id": payload.order_id });
 
@@ -67,8 +39,43 @@ pub async fn handle_payment(
             tracing::info!("Failed to publish to NATS");
             "Failed to publish to NATS"
         })?;
+    Ok(())
+}
+
+pub async fn handle_payment(
+    State(state): State<AppState>,
+    Json(payload): Json<PaymentPayload>,
+) -> Result<String, &'static str> {
+    let tracer = global::tracer("payment");
+
+    
+    tracing::info!(
+        "Starting payment processing for order ID: {}",
+        payload.order_id
+    );
+
+    let mut span = tracer
+        .span_builder("processing payment".to_string())
+        .with_kind(SpanKind::Producer)
+        .start(&tracer);
+
+    // Simulate a delay to mimic payment processing
+    sleep(Duration::from_millis(500)).await;
+    tracing::info!(
+        "Payment processing completed for order ID: {}",
+        payload.order_id
+    );
 
     Span::end(&mut span);
+    
+    /*let mut span = tracer
+        .span_builder("producing paid event".to_string())
+        .with_kind(SpanKind::Producer)
+        .start(&tracer);*/
+
+    produce(&payload, state).await?;
+
+    //Span::end(&mut span);
 
     tracing::info!(
         "Payment processed and event published for order ID: {}",
