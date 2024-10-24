@@ -1,15 +1,18 @@
+use async_nats::jetstream::{
+    self,
+    stream::{Config, Stream},
+    Context,
+};
+use async_nats::{
+    connect_with_options, jetstream::stream::RetentionPolicy, Client, ConnectOptions,
+};
 use std::{collections::HashSet, env};
-use async_nats::jetstream::{self, stream::{Stream, Config}, Context};
-use async_nats::{connect_with_options, jetstream::stream::RetentionPolicy, Client, ConnectOptions};
 
 pub async fn get_nats_connection() -> Result<Client, async_nats::Error> {
     let broker_url = env::var("NATS_URL").unwrap_or("localhost:4222".to_string());
-    let client = connect_with_options(
-        broker_url,
-        ConnectOptions::new().name("payment"),
-    )
-    .await
-    .unwrap();
+    let client = connect_with_options(broker_url, ConnectOptions::new().name("payment"))
+        .await
+        .unwrap();
     Ok(client)
 }
 
@@ -19,11 +22,7 @@ pub async fn get_nats_jetstream_context() -> Result<Context, async_nats::Error> 
     Ok(jetstream_ctx)
 }
 
-
-pub async fn update_stream(
-    stream: String,
-    subjects: Vec<String>,
-) -> Result<(), async_nats::Error> {
+pub async fn update_stream(stream: String, subjects: Vec<String>) -> Result<(), async_nats::Error> {
     let context = get_nats_jetstream_context().await?;
     let config = jetstream::stream::Config {
         name: stream.clone(),

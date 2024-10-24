@@ -1,12 +1,11 @@
 import json
 
+import logfire
 from nats.aio.client import Client as NATS
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 
 from ..models.orders import Orders, OrdersSchema
-
-import logfire
 
 
 class OrderMutator:
@@ -39,10 +38,15 @@ class OrderMutator:
                     result = await session.execute(
                         select(Orders).where(Orders.order_id == order_id)
                     )
-                    order = result.scalars().one()  # note: not handled error for illustration
+                    order = (
+                        result.scalars().one()
+                    )  # note: not handled error for illustration
                 with logfire.span("updating payment status and publishing event"):
                     order.payment_status = "paid"
                     await nats_client.publish(
-                            "events.complete", json.dumps({"order_id": order.order_id, "email": order.email}).encode()
+                        "events.complete",
+                        json.dumps(
+                            {"order_id": order.order_id, "email": order.email}
+                        ).encode(),
                     )
                     await session.commit()

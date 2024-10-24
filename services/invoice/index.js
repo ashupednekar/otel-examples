@@ -4,6 +4,7 @@ const Minio = require('minio');
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
+require('dotenv').config();
 
 const sc = StringCodec();
 
@@ -84,8 +85,9 @@ const generateInvoice = async (orderData) => {
 
 const startConsumer = async () => {
     try {
-        
-        const nc = await connect({ servers: 'localhost:30042' });
+       
+        const nats_url = process.env.NATS_URL || 'localhost:30042'
+        const nc = await connect({ servers: nats_url });
         console.log('Connected to NATS');
 
         

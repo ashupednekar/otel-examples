@@ -21,5 +21,6 @@ class AppState:
 state = AppState()
 logfire.instrument_sqlalchemy(engine=state.engine.sync_engine)
 
+
 def get_app_state() -> AppState:
     return state

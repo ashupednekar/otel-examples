@@ -10,3 +10,74 @@ services:
      - MINIO_ROOT_USER=minio
      - MINIO_ROOT_PASSWORD=miniopass
     network_mode: host
+
+  nats1:
+    image: docker.io/nats:2.9.20
+    container_name : "nats1"
+    ports:
+      - "30042:4222"
+      - "8222:8222"      
+    volumes:
+      - $MAPPED_VOLUMES/nats-compose/nats1:/data
+    command:
+      - "--name=nats1"
+      - "--cluster_name=c1"
+      - "--cluster=nats://nats1:6222"
+      - "--routes=nats-route://nats1:6222,nats-route://nats2:6222,nats-route://nats3:6222"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/data"
+    restart: always
+
+  nats2:
+    image: docker.io/nats:2.9.20
+    container_name : "nats2"
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    volumes:
+      - $MAPPED_VOLUMES/nats-compose/nats2:/data
+    command:
+      - "--name=nats2"
+      - "--cluster_name=c1"
+      - "--cluster=nats://nats2:6222"
+      - "--routes=nats-route://nats1:6222,nats-route://nats2:6222,nats-route://nats3:6222"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/data"
+    restart: always
+
+  nats3:
+    image: docker.io/nats:2.9.20
+    container_name : "nats3"
+    ports:
+      - "4224:4222"
+      - "8224:8222"
+    volumes:
+      - $MAPPED_VOLUMES/nats-compose/nats3:/data
+    command:
+      - "--name=nats3"
+      - "--cluster_name=c1"
+      - "--cluster=nats://nats3:6222"
+      - "--routes=nats-route://nats1:6222,nats-route://nats2:6222,nats-route://nats3:6222"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/data"
+    restart: always
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    container_name: jaeger
+    environment:
+     - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+     - 6831:6831
+     - 6832:6832
+     - 5778:5778
+     - 16686:16686
+     - 4317:4317 
+     - 4318:4318
+     - 14250:14250
+     - 14268:14268
+     - 14269:14269
+     - 9411:9411

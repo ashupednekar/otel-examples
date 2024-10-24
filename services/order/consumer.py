@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 
 import typer
 from adaptors.mutators.orders import OrderMutator
@@ -23,15 +24,16 @@ async def message_handler(msg):
     adaptor = TypeAdapter(PaidPayload)
     payload = adaptor.validate_python(json.loads(data))
     try:
-        await OrderMutator.mark_as_paid(get_app_state().pool, nats_client, payload.order_id)
+        await OrderMutator.mark_as_paid(
+            get_app_state().pool, nats_client, payload.order_id
+        )
     except NoResultFound:
         print("order not found")
     await msg.ack()
 
 
-
 async def start_consumer(stream_name: str, subject: str):
-    await nats_client.connect("nats://localhost:30042")
+    await nats_client.connect(os.getenv("NATS_URL"))
     js = nats_client.jetstream()
 
     try:
@@ -51,15 +53,15 @@ async def start_consumer(stream_name: str, subject: str):
         if "not found" in str(e).lower():
             # Create consumer if it doesn't exist
             consumer_config = ConsumerConfig(
-                durable_name=durable_name, 
-                ack_policy="explicit", 
-                filter_subject=subject
+                durable_name=durable_name, ack_policy="explicit", filter_subject=subject
             )
             await js.add_consumer(stream_name, consumer_config)
 
     # Create pull subscription using the consumer
     subscription = await js.pull_subscribe(subject, durable_name)
-    print(f"Listening for messages on subject '{subject}' with consumer '{durable_name}'...")
+    print(
+        f"Listening for messages on subject '{subject}' with consumer '{durable_name}'..."
+    )
 
     while True:
         try:
@@ -71,9 +73,6 @@ async def start_consumer(stream_name: str, subject: str):
             if "timeout" not in str(e).lower():  # Ignore timeout exceptions
                 print(f"Error processing messages: {e}")
         await asyncio.sleep(0.1)
-
-
-
 
 
 @app.command()
