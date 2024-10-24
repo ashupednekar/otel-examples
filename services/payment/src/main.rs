@@ -10,7 +10,6 @@ use opentelemetry_otlp::{ExportConfig, SpanExporter, TonicConfig, WithExportConf
 use opentelemetry_sdk::trace::TracerProvider;
 use opentelemetry_sdk::{propagation::TraceContextPropagator, Resource};
 
-
 mod data;
 mod helpers;
 mod pay;
@@ -26,13 +25,13 @@ fn init_tracer() -> Result<(), Box<dyn std::error::Error>> {
             opentelemetry_otlp::new_exporter()
                 .tonic()
                 .with_endpoint("http://localhost:4317")
-                .with_timeout(Duration::from_secs(5))
+                .with_timeout(Duration::from_secs(5)),
         )
         .with_trace_config(opentelemetry_sdk::trace::Config::default().with_resource(
             Resource::new(vec![KeyValue::new("service.name", "payment")]),
         ))
         .install_batch(opentelemetry_sdk::runtime::Tokio)?;
-    
+
     opentelemetry::global::set_tracer_provider(tracer_provider);
     Ok(())
 }

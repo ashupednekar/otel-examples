@@ -1,10 +1,7 @@
 use std::time::Duration;
 
 use axum::{extract::State, Json};
-use opentelemetry::{
-    global::{self, ObjectSafeSpan},
-    trace::{Span, SpanKind, Status, Tracer},
-};
+use opentelemetry::trace::{Span, Tracer};
 use tracing;
 
 use serde::Serialize;
@@ -18,9 +15,8 @@ struct Response {
     message: &'static str,
 }
 
-
 #[tracing::instrument]
-async fn produce(payload: &PaymentPayload, state: AppState) -> Result<(), &'static str>{
+async fn produce(payload: &PaymentPayload, state: AppState) -> Result<(), &'static str> {
     let subject = "events.paid";
     let message = json!({ "order_id": payload.order_id });
 
@@ -46,9 +42,8 @@ pub async fn handle_payment(
     State(state): State<AppState>,
     Json(payload): Json<PaymentPayload>,
 ) -> Result<String, &'static str> {
-    let tracer = global::tracer("payment");
+    let tracer = opentelemetry::global::tracer("payment");
 
-    
     tracing::info!(
         "Starting payment processing for order ID: {}",
         payload.order_id
@@ -56,10 +51,8 @@ pub async fn handle_payment(
 
     let mut span = tracer
         .span_builder("processing payment".to_string())
-        .with_kind(SpanKind::Producer)
         .start(&tracer);
 
-    // Simulate a delay to mimic payment processing
     sleep(Duration::from_millis(500)).await;
     tracing::info!(
         "Payment processing completed for order ID: {}",
@@ -67,15 +60,17 @@ pub async fn handle_payment(
     );
 
     Span::end(&mut span);
-    
-    /*let mut span = tracer
-        .span_builder("producing paid event".to_string())
-        .with_kind(SpanKind::Producer)
-        .start(&tracer);*/
+
+    let s = tracing::span!(tracing::Level::INFO, "AAA");
+    let _ = s.enter();
+    let s1 = tracing::span!(tracing::Level::INFO, "aaa");
+    let _ = s1.enter();
+    sleep(Duration::from_millis(100)).await;
+    drop(s1);
+    sleep(Duration::from_millis(100)).await;
+    drop(s);
 
     produce(&payload, state).await?;
-
-    //Span::end(&mut span);
 
     tracing::info!(
         "Payment processed and event published for order ID: {}",
